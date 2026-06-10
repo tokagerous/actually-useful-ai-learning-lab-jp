@@ -1,99 +1,100 @@
-# 6 — Break It & Investigate: Assistant Investigations
+# 6 — 障害注入と調査: Assistant Investigations
 
-*Time: ~30 min. The centerpiece. Goal: inject a real failure, launch a multi-agent Deep Investigation, and read the RCA report it produces.*
+*所要時間: 約 30 分。このモジュールの中心です。目標: 実際の障害を注入し、マルチエージェントのディープ調査を起動して、生成された RCA レポートを読む。*
 
 > [!NOTE]
-> Assistant Investigations is in **public preview**. You need the **Assistant Investigation User** role — pre-assigned on your workshop login.
+> Assistant Investigations は**パブリックプレビュー**中です。**Assistant Investigation User** ロールが必要です — ワークショップのログインに事前付与されています。
 
-## How Investigations work (30-second mental model)
+## Investigation の仕組み（30 秒で理解するメンタルモデル）
 
-When you launch an investigation, a **lead investigator** plans the work and fans out specialized agents — **Prometheus** (metrics), **Loki** (logs), **Tempo** (traces), **Pyroscope** (profiles), and **SQL** — that gather evidence in parallel. A **reporter** compiles everything into a structured report: **Summary**, **Report**, **Timeline**, and **Activity** log.
+Investigation を起動すると、**リード調査員**が作業を計画し、専門エージェント — **Prometheus**（メトリクス）、**Loki**（ログ）、**Tempo**（トレース）、**Pyroscope**（プロファイル）、**SQL** — に並行して証拠収集を指示します。**レポーター**がすべてをまとめ、構造化されたレポートを作成します: **Summary**、**Report**、**Timeline**、**Activity** ログ。
 
-## Step 1 — Inject the failure yourself (k6)
+## ステップ 1 — 障害を自分で注入する（k6）
 
-You'll break the app yourself by running a **k6 performance test**. The **"…With Failure"** and **"…Feature Flag Controller"** tests flip a failure scenario in the running app.
+**k6 パフォーマンステスト**を実行してアプリを壊します。**"…With Failure"** および **"…Feature Flag Controller"** テストは、稼働中のアプリの障害シナリオを切り替えます。
 
-1. Left nav → **Testing & synthetics → Performance → `ecommerce` project**.
-2. Open **Trigger Service Restart with Failure** (recommended for this exercise — it restarts a service unhealthy and gives a clean error spike to investigate).
-3. Click **Run**. **Note the time you started it** — you'll hand it to the Assistant as a timeframe.
+1. 左ナビ → **Testing & synthetics → Performance → `ecommerce` プロジェクト**。
+2. **Trigger Service Restart with Failure** を開きます（この演習のお勧め — サービスを異常な状態で再起動し、調査しやすいきれいなエラースパイクを生成します）。
+3. **Run** をクリックします。**開始時刻をメモしておきましょう** — 後で Assistant に時間帯として伝えます。
 
-Other failure tests you can try later: **Broken DB Connection RCA Feature Flag Controller**, **Slow DB Query RCA Feature Flag Controller**, **Trigger Beta Rollout With Failure**. (Leave **Background Load** running so the failure has live traffic to affect.)
+後で試せる別の障害テスト: **Broken DB Connection RCA Feature Flag Controller**、**Slow DB Query RCA Feature Flag Controller**、**Trigger Beta Rollout With Failure**。（障害に流れるトラフィックがあるよう、**Background Load** は実行したままにしておきましょう。）
 
-## Step 2 — Ask the Assistant which service is affected
+## ステップ 2 — 影響を受けているサービスを Assistant に見つけてもらう
 
-Give it ~2–3 min for errors to accumulate. Then open the **Assistant** (✦) and ask it to find the culprit for you:
+エラーが蓄積するまで約 2〜3 分待ちます。次に **Assistant**（✦）を開き、原因を探すよう依頼します。
 
 ```
-Something just started failing on the e-commerce app (namespace ecommerce-prod) in
-the last few minutes. Which service is most affected, is the symptom errors or latency,
-and roughly when did it start? Answer with the single affected service name first.
+直近数分で EC アプリ（Namespace: ecommerce-prod）で何かが失敗し始めました。
+最も影響を受けているサービスはどれですか？症状はエラーですかレイテンシーですか？
+またいつ頃始まりましたか？最初に影響を受けているサービス名だけ答えてください。
 ```
 
-**Write down the service name it gives you** — you'll use it in the RCA workbench and the investigation below. (Throughout the rest of this module, replace `<SERVICE>` with that name.)
+**サービス名をメモしておきましょう** — RCA ワークベンチと以降の調査で使います。（以降のステップでは `<SERVICE>` をそのサービス名に置き換えてください。）
 
-## Step 3 — Scope the RCA workbench to the affected service
+## ステップ 3 — 影響を受けているサービスに RCA ワークベンチのスコープを絞る
 
-1. Go to **Observability → RCA workbench**.
-2. In the scope/search box, instead of *all services*, enter:
+1. **Observability → RCA workbench** に移動します。
+2. スコープ/検索ボックスに、*すべてのサービス*の代わりに次を入力します。
 
    ```
    <SERVICE> connected services
    ```
 
-   This narrows the workbench to the affected service **plus everything connected to it** — much clearer than the whole app once you know where the problem is.
-3. Review the result: you should see `<SERVICE>` and its **affected + connected services** light up with the error spike, saturation, and latency from the restart. This is the blast radius.
+   これにより、ワークベンチは影響を受けているサービス**とそれに接続されているすべてのサービス**に絞り込まれます。問題の場所が特定できたら、アプリ全体よりもずっと明確になります。
+3. 結果を確認します。`<SERVICE>` とその**影響を受けた接続済みサービス**が、再起動によるエラースパイク、サチュレーション、レイテンシーとともに表示されているはずです。これがブラスト半径です。
 
-## Step 4 — Analyse the RCA workbench
+## ステップ 4 — RCA ワークベンチで分析する
 
-1. In the **bottom-left** of the RCA workbench, click **Analyse**.
-2. This runs the workbench's correlated root-cause analysis across `<SERVICE>` and its connected services — ranking the most likely cause and the related anomalies (errors, saturation, latency) on a shared timeline.
-3. Read what it surfaces: note the suspected root cause and which connected services were dragged in. You'll compare this against what the Deep Investigation concludes next.
+1. RCA ワークベンチの**左下**にある **Analyse** をクリックします。
+2. `<SERVICE>` とその接続サービス全体にわたる相関根本原因分析が実行され、最も可能性の高い原因と関連する異常（エラー、サチュレーション、レイテンシー）が共有タイムライン上でランク付けされます。
+3. 表示された内容を確認します。疑わしい根本原因と、どの接続サービスが影響を受けたかをメモしておきましょう。次のディープ調査の結論と比較します。
 
-## Step 5 — Launch a Deep Investigation
+## ステップ 5 — ディープ調査を起動する
 
-1. Open the **Assistant** and switch the chat mode to **Investigation** (a.k.a. **Deep Investigation**). You can also open **Assistant → Investigations** to see the workspace.
-2. Paste this prompt, swapping in the service name from Step 2:
-
-```
-Run a deep investigation. <SERVICE> on the e-commerce app (namespace ecommerce-prod)
-started erroring a few minutes ago after an unhealthy restart. Investigate <SERVICE>
-and its connected and dependent services over the last 30 minutes. Correlate metrics,
-logs, and traces to find the root cause, map the blast radius across upstream and
-downstream services, and recommend the next steps to remediate.
-```
-
-3. Watch the **investigation workspace**. The agents announce progress as they query metrics, logs, and traces. You can **steer** mid-flight — e.g. *"focus on the restart and pod health"* or *"check the downstream services specifically."*
-
-## Step 6 — Read the report
-
-When the agents finish, review:
-
-- **Summary** — the headline finding + recommended next steps (brief stakeholders with this).
-- **Report** — full findings with the actual queries and evidence each agent collected. It's editable Markdown — add a note correcting or confirming a finding.
-- **Timeline** — agent tasks in order; useful for the post-incident review.
-- **Activity** — raw events, so you can reproduce any single step.
-
-**Validate it:** does the root cause match the failure you injected (the service restart)? Did it identify the right service and the downstream impact?
-
-## Step 7 — Turn findings into action
-
-Ask the Assistant:
+1. **Assistant** を開き、チャットモードを **Investigation**（別名 **Deep Investigation**）に切り替えます。**Assistant → Investigations** からワークスペースを開くこともできます。
+2. ステップ 2 で特定したサービス名を入れて、このプロンプトを貼り付けます。
 
 ```
-Convert this investigation into an incident summary I could post in Slack, and list 3 follow-up tasks.
+ディープ調査を実行してください。ecommerce アプリ（Namespace: ecommerce-prod）の
+<SERVICE> が数分前に異常な再起動後にエラーを出し始めました。
+<SERVICE> とその接続・依存サービスを直近 30 分間にわたって調査してください。
+メトリクス、ログ、トレースを相関させて根本原因を特定し、上流・下流サービス全体の
+ブラスト半径をマッピングし、修復のための次のステップを提案してください。
 ```
 
-## Step 8 — Compare notes
+3. **Investigation ワークスペース**を観察します。エージェントがメトリクス、ログ、トレースをクエリしながら進捗を報告します。調査の途中で**方向転換**することもできます — 例: *「再起動とポッドの状態に集中して」* または *「特にダウンストリームサービスを確認して」*。
 
-Compare your investigation’s root cause with a neighbour’s — did the agents converge on the same culprit? The restart test recovers on its own once it finishes; re-run a different failure test if you want another round.
+## ステップ 6 — レポートを読む
 
-## ✅ Checkpoint
+エージェントが終了したら、以下を確認します。
 
-You injected a failure, ran a multi-agent investigation, validated the root cause against ground truth, and produced a shareable incident summary — the full "what's happening → what do I do" loop.
+- **Summary** — 主要な発見と推奨される次のステップ（ステークホルダーへの報告にはこれを使います）。
+- **Report** — 各エージェントが収集した実際のクエリと証拠を含む詳細な調査結果。編集可能な Markdown 形式です — 発見を確認・訂正するメモを追加できます。
+- **Timeline** — 順序付きのエージェントタスク。ポストインシデントレビューに役立ちます。
+- **Activity** — 生のイベントログ。任意のステップを個別に再現できます。
 
-## Discussion
+**検証:** 根本原因は注入した障害（サービスの再起動）と一致していますか？正しいサービスとダウンストリームへの影響を特定できていますか？
 
-- Where would IRM webhooks fit? (Investigations can auto-launch from alert groups / incidents.)
-- How does the knowledge graph from Module 2 make the investigation smarter?
+## ステップ 7 — 調査結果をアクションに変える
 
-Next: **[Module 7 — AI Observability →](./07-ai-observability.md)**
+Assistant に依頼します。
+
+```
+この調査を Slack に投稿できるインシデントサマリーに変換し、
+フォローアップタスクを 3 つ列挙してください。
+```
+
+## ステップ 8 — 結果を比較する
+
+近くの参加者と根本原因を比較しましょう — エージェントは同じ原因に収束しましたか？再起動テストは終了すると自動で回復します。別の障害テストをもう一周試したい場合は再実行してみましょう。
+
+## ✅ チェックポイント
+
+障害を注入し、マルチエージェントの調査を実行し、根本原因をグラウンドトゥルースと照合し、共有可能なインシデントサマリーを作成しました — 「何が起きているか → どうすればよいか」の完全なループです。
+
+## ディスカッション
+
+- IRM webhooks はどこに位置づけられますか？（Investigation はアラートグループ/インシデントから自動起動できます。）
+- モジュール 2 のナレッジグラフはどのように Investigation をより賢くしますか？
+
+次: **[モジュール 7 — AI Observability →](./07-ai-observability.md)**

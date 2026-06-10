@@ -1,60 +1,60 @@
-# 7 — AI Observability: Observe the Agentic App
+# 7 — AI Observability: アジェンティックアプリを観察する
 
-*Time: ~20 min. Goal: the meta-moment — the e-commerce app is itself an AI agent app, and Grafana's AI Observability lets you see inside its LLM calls, costs, and quality.*
+*所要時間: 約 20 分。目標: メタな瞬間 — EC アプリ自体が AI エージェントアプリであり、Grafana の AI Observability によってその LLM 呼び出し、コスト、品質を内側から確認できる。*
 
-Remember `chatservice`? The store has an AI shopping assistant built from multiple agents (`general_agent`, `product_agent`, `cart_agent`) backed by Claude and GPT models. AI Observability gives you a forensic view of how those agents behave — the same tooling Grafana uses to improve the Assistant itself.
+`chatservice` を覚えていますか？このストアには、Claude と GPT モデルを使った複数のエージェント（`general_agent`、`product_agent`、`cart_agent`）で構成された AI ショッピングアシスタントが組み込まれています。AI Observability はこれらのエージェントの動作を詳細に確認する手段を提供します — Grafana 自身が Assistant の改善に使っているのと同じツールです。
 
-## A. Generate your own conversation, then trace it back
+## A. 自分の会話を生成してトレースバックする
 
-This is the payoff — you'll create AI telemetry and immediately find it.
+これが醍醐味です — 自分で AI テレメトリを作り、すぐにそれを見つけます。
 
-1. Open the **storefront** (the e-commerce app — ask your facilitator for the URL, or use the `frontend` route). Find the **shopping assistant / chat** widget.
-2. Have a short conversation about **telescopes** — e.g.:
-   > "I'm a beginner — recommend a telescope under $200 for viewing planets."
+1. **ストアフロント**（EC アプリ）を開きます（URL はファシリテーターに確認するか、`frontend` のルートを使います）。**ショッピングアシスタント / チャット**ウィジェットを探します。
+2. **望遠鏡**についての短い会話をします — 例:
+   > 「初心者なのですが、惑星観測に適した 200 ドル以下の望遠鏡を教えてください。」
    
-   Ask a follow-up or two ("what about for astrophotography?", "add the first one to my cart") so multiple agents get involved. **Note the rough time** you chatted.
-3. Now switch to Grafana: **Observability → AI → Conversations**.
-4. Find **your** conversation at the top of the list (sort/filter by most recent; match the timestamp). Open it.
-5. Drill into the turns: see which agents handled it (`general_agent`, `product_agent`, `cart_agent`), which **models** were called, the **tool calls**, and the **token count** for *your* questions.
+   フォローアップ質問もしてみましょう（「天体写真撮影にはどうですか？」、「最初のものをカートに追加して」）。複数のエージェントが関わるようにします。**会話した大まかな時刻をメモしておきましょう。**
+3. Grafana に戻ります: **Observability → AI → Conversations**。
+4. 一覧の上部で**自分の**会話を見つけます（最新順に並べ替え/フィルタリングしてタイムスタンプで照合）。開きます。
+5. ターンを詳しく確認します。どのエージェントが対応したか（`general_agent`、`product_agent`、`cart_agent`）、どの**モデル**が呼び出されたか、**ツール呼び出し**、そして*あなたの*質問に対する**トークン数**が分かります。
 
 > [!TIP]
-> This is the whole point of AI Observability — every real user conversation becomes debuggable telemetry. You just watched your own words turn into a traceable, costed, multi-agent flow.
+> これが AI Observability の本質です — あらゆるリアルユーザーの会話がデバッグ可能なテレメトリになります。たった今、自分の言葉が追跡可能でコスト計算されたマルチエージェントフローに変換される様子を目撃しました。
 
-## B. Insights — performance, cost & usage
+## B. インサイト — パフォーマンス、コスト、使用状況
 
-1. Open the AI Observability **Analytics / Insights** view.
-2. You'll see headline metrics: **Conversations**, **Avg Tokens / Conversation**, **Avg Calls / Conversation**, **Rated** and **Bad-Rated %**, plus an **AI analysis** summary (e.g. "token efficiency improved — lower avg tokens per conversation").
-3. Filter by **Provider**, **Model**, or **Agent**. Which agent is busiest? Which model is most expensive per conversation?
+1. AI Observability の **Analytics / Insights** ビューを開きます。
+2. ヘッドラインメトリクスが表示されます: **Conversations**、**Avg Tokens / Conversation**、**Avg Calls / Conversation**、**Rated** と **Bad-Rated %**、および **AI analysis** サマリー（例: 「トークン効率が改善 — 会話あたりの平均トークン数が減少」）。
+3. **Provider**、**Model**、**Agent** でフィルタリングします。最も多く使われているエージェントはどれですか？会話あたりのコストが最も高いモデルはどれですか？
 
-## C. Conversations — debug down to the token
+## C. Conversations — トークン単位でデバッグする
 
-1. Back in **Conversations**, beyond your own, each row is a real shopping conversation — duration, **calls**, **tokens**, which **agents** and **models** were involved, and a **quality** rating.
-2. Open one (e.g. an "…Telescope Recommendations" conversation). Drill into the turns: see every sub-agent hop, tool call, and token count. This is the "new primitive" — conversation data you can debug like a trace.
+1. **Conversations** に戻ります。自分のもの以外にも、各行はリアルなショッピング会話です — 継続時間、**呼び出し数**、**トークン数**、関与した**エージェント**と**モデル**、および**品質**評価。
+2. 1 つを開きます（例: 「…Telescope Recommendations」会話）。ターンを詳細に確認します。サブエージェントのホップ、ツール呼び出し、トークン数をすべて確認できます。これが「新しいプリミティブ」です — トレースのようにデバッグできる会話データです。
 
-**Try:** find a conversation that used the most tokens or calls and figure out *why* (a multi-agent loop? a long tool chain?).
+**試してみましょう:** 最もトークン数または呼び出し数が多い会話を見つけ、*なぜ*そうなったかを特定します（マルチエージェントのループ？長いツールチェーン？）。
 
-## D. Agents — system-prompt analysis
+## D. Agents — システムプロンプト分析
 
-1. Open **Agents**.
-2. AI Observability analyses each agent's **system prompt against real conversations** and flags weaknesses worth improving.
-3. Pick an agent and read what it suggests. (This is exactly how the Grafana team tightens the Assistant's own prompts.)
+1. **Agents** を開きます。
+2. AI Observability は各エージェントの**システムプロンプトをリアルな会話と照合**し、改善すべき弱点をフラグとして示します。
+3. エージェントを 1 つ選び、提案内容を確認します。（これはまさに Grafana チームが Assistant 自身のプロンプトを改善する方法です。）
 
-## E. Evaluations — quality gates
+## E. Evaluations — 品質ゲート
 
-1. Open **Evaluation**.
-2. Online evals score agent responses continuously in production. Combined with Grafana Alerting, a drop in quality can page you — a full feedback loop for AI changes.
+1. **Evaluation** を開きます。
+2. オンライン評価はエージェントの応答を本番環境で継続的にスコアリングします。Grafana Alerting と組み合わせることで、品質の低下でアラートを受け取れます — AI 変更のための完全なフィードバックループです。
 
-## F. Ask the Assistant about the agents
+## F. エージェントについて Assistant に聞く
 
 ```
-Which shopping agent has the highest token cost per conversation, and what's driving it?
+どのショッピングエージェントが会話あたりのトークンコストが最も高く、その原因は何ですか？
 ```
 ```
-Have any AI conversations been rated bad recently? Summarize the common themes.
+最近、悪い評価を受けた AI 会話はありますか？共通するテーマをまとめてください。
 ```
 
-## ✅ Checkpoint
+## ✅ チェックポイント
 
-You inspected a live agentic app the way you'd inspect any service — usage, cost, per-conversation detail, prompt quality, and evals. Observing AI *with* AI. Last stop: a prompt challenge.
+ライブのアジェンティックアプリを一般サービスと同様に調査しました — 使用状況、コスト、会話単位の詳細、プロンプト品質、評価。AI を使って AI を観察しました。最後はプロンプトチャレンジです。
 
-Next: **[Module 8 — Assistant Challenge →](./08-assistant-challenge.md)**
+次: **[モジュール 8 — Assistant チャレンジ →](./08-assistant-challenge.md)**

@@ -1,46 +1,46 @@
-# 0 — Log In & Get Oriented
+# 0 — ログインして概要を把握する
 
-*Time: ~10 min. Your environment is already built and live. You just log in and find your way around.*
+*所要時間: 約 10 分。環境はすでに構築・起動済みです。ログインしてひと通り確認しましょう。*
 
-## The app you'll be observing
+## 観察するアプリについて
 
-A cloud-native **astronomy e-commerce store** ("ecommerce") running on **Kubernetes**, made of ~20 microservices (`frontend`, `cartservice`, `checkoutservice`, `paymentservice`, `productcatalogservice`, `recommendationservice`, `currencyservice`, and more) in the `ecommerce-prod` namespace. It emits full OpenTelemetry metrics, logs, and traces.
+**Kubernetes** 上で動作するクラウドネイティブな**天文学系 EC サイト**（"ecommerce"）です。約 20 のマイクロサービス（`frontend`、`cartservice`、`checkoutservice`、`paymentservice`、`productcatalogservice`、`recommendationservice`、`currencyservice` など）が `ecommerce-prod` Namespace で稼働しており、OpenTelemetry のメトリクス・ログ・トレースを完全に出力しています。
 
-It's also an **agentic AI app**: a `chatservice` with shopping agents (`general_agent`, `product_agent`, `cart_agent`) backed by Claude and GPT models. So today you'll observe a real microservices app *and* a real AI agent app — and use AI to do it.
+また、これは**アジェンティック AI アプリ**でもあります。`chatservice` には Claude と GPT モデルを使ったショッピングエージェント（`general_agent`、`product_agent`、`cart_agent`）が含まれています。今日はリアルなマイクロサービスアプリ*と*リアルな AI エージェントアプリを同時に観察し、さらに AI を使ってそれを行います。
 
-## 1. Log in
+## 1. ログインする
 
-1. Open the workshop Grafana Cloud URL (e.g. `https://<your-stack>.grafana.net`).
-2. Sign in with the credentials your facilitator provided.
+1. ワークショップの Grafana Cloud URL（例: `https://<your-stack>.grafana.net`）を開きます。
+2. ファシリテーターから提供された認証情報でサインインします。
 
-## 2. Open the Assistant
+## 2. Assistant を開く
 
-In the **top bar**, click **Open Grafana Assistant** (the sparkle ✦). A chat panel opens on the right. Say hi — if it answers, you're set. There's also an **Assistant** entry in the left nav.
+**トップバー**の **Open Grafana Assistant**（スパークル ✦）をクリックします。右側にチャットパネルが開きます。挨拶してみて — 返答があれば準備完了です。左ナビにも **Assistant** の項目があります。
 
-## 3. Know the map (left nav)
+## 3. マップを把握する（左ナビ）
 
-You'll move between these areas today:
+今日はこれらのエリアを行き来します。
 
-- **Drilldown** — queryless exploration of Metrics, Logs, and Traces.
-- **Observability** — the heart of the stack:
-  - **Application** — service inventory + RED metrics + Service Map for the e-commerce services.
-  - **Kubernetes** — clusters, namespaces, workloads, nodes, cost, alerts.
-  - **AI** — *AI Observability*: conversations, agents, models, tokens, and evals for the shopping agents.
-  - **Entity graph** / **RCA workbench** — the knowledge graph (Asserts) and root-cause workbench.
-  - **Frontend**, **Database** — frontend and DB observability.
-- **Testing & synthetics → Performance** — the **k6** project (`ecommerce`). Load tests here generate traffic *and* inject failures (your facilitator drives these in Module 4).
-- **Assistant** and **AI & machine learning** — the AI co-pilot and ML/Sift features.
+- **Drilldown** — クエリなしでメトリクス、ログ、トレースを探索。
+- **Observability** — スタックの中心:
+  - **Application** — EC サービスのサービスインベントリ、RED メトリクス、サービスマップ。
+  - **Kubernetes** — クラスター、Namespace、ワークロード、ノード、コスト、アラート。
+  - **AI** — *AI Observability*: ショッピングエージェントの会話、エージェント、モデル、トークン、評価。
+  - **Entity graph** / **RCA workbench** — ナレッジグラフ（Asserts）と根本原因分析ワークベンチ。
+  - **Frontend**、**Database** — フロントエンドと DB のオブザーバビリティ。
+- **Testing & synthetics → Performance** — **k6** プロジェクト（`ecommerce`）。ここのロードテストがトラフィックを生成し、障害を注入します（モジュール 6 でファシリテーターが操作します）。
+- **Assistant** と **AI & machine learning** — AI コパイロットと ML/Sift 機能。
 
-## 4. Quick sanity check
+## 4. 簡単な動作確認
 
-- **Observability → Application** → confirm you see services in the `ecommerce-prod` namespace.
-- **Observability → Kubernetes** → confirm a cluster shows up.
-- **Drilldown → Traces** → confirm spans from `frontend` / `checkoutservice`.
+- **Observability → Application** → `ecommerce-prod` Namespace のサービスが表示されることを確認します。
+- **Observability → Kubernetes** → クラスターが表示されることを確認します。
+- **Drilldown → Traces** → `frontend` / `checkoutservice` のスパンが表示されることを確認します。
 
-If anything's empty, flag a facilitator (a background load test may need starting).
+何も表示されない場合はファシリテーターに声をかけてください（バックグラウンドのロードテストを開始する必要があるかもしれません）。
 
-## 5. Investigations access
+## 5. Investigations へのアクセス確認
 
-In Module 4 you'll run a multi-agent investigation, which needs the **Assistant Investigation User** role — pre-assigned on your workshop login. To confirm: open the Assistant and check you can switch to **Investigation** mode.
+モジュール 6 でマルチエージェントの Investigation を実行します。これには **Assistant Investigation User** ロールが必要です — ワークショップのログインに事前付与されています。確認するには: Assistant を開いて **Investigation** モードに切り替えられることを確認します。
 
-Head to **[Module 1 — Explore Without Queries →](./Lab/01-explore-drilldown.md)**
+**[モジュール 1 — クエリなしで探索する →](./Lab/01-explore-drilldown.md)** に進みましょう。

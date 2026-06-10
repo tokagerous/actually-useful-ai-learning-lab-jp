@@ -1,69 +1,69 @@
-# 8 — 🧠 Challenge: Actually Useful Prompts
+# 8 — 🧠 チャレンジ: 実践的に役立つプロンプト
 
-*Time: ~15 min. The finale.*
+*所要時間: 約 15 分。フィナーレです。*
 
-By now you have:
+ここまでで以下を行いました。
 
-- Explored metrics, logs, and traces queryless (Drilldown) and correlated between them
-- Seen Application Observability — service inventory, Service Map, Entity graph (knowledge graph) and RCA workbench
-- Toured Kubernetes Observability and let the Assistant explain pod/node health
-- Driven the Assistant to query, correlate, and build a dashboard
-- Run a multi-agent Investigation on a real failure injected via a k6 test
-- Inspected the app's own AI Observability — conversations, agents, token cost, evals
-- Customized the Assistant with Memories + Rules and scheduled an Automation
+- Drilldown でクエリなしにメトリクス、ログ、トレースを探索し、シグナル間を相関させた
+- Application Observability を確認 — サービスインベントリ、サービスマップ、エンティティグラフ（ナレッジグラフ）、RCA ワークベンチ
+- Kubernetes Observability を確認し、Assistant にポッド/ノードの状態を説明してもらった
+- Assistant を使ってクエリを実行し、シグナルを相関させ、ダッシュボードを構築した
+- k6 テストで注入した実際の障害に対してマルチエージェントの Investigation を実行した
+- アプリ自身の AI Observability を調査 — 会話、エージェント、トークンコスト、評価
+- Memories と Rules で Assistant をカスタマイズし、Automation をスケジュールした
 
-## The goal
+## 目標
 
-Find the **most useful** thing the Assistant can do for *your* day job. Work solo or in pairs.
+*自分の*日常業務で Assistant が最も役に立てることを見つけましょう。1 人でも、ペアでも構いません。
 
-Craft prompts and capture the responses. At the end, be ready to share your **best 1–2 prompts**, the response, and a one-line "why this is useful / when I'd reach for it in real life."
+プロンプトを考えて回答を記録します。最後に、**ベストな 1〜2 個のプロンプト**と、その回答、そして「なぜ役立つか / 実際にいつ使うか」を一言で共有できるよう準備してください。
 
 > [!TIP]
-> Think like someone on-call. The best prompts tend to:
-> - Find the errors that actually matter (not just noisy ones)
-> - Spot patterns *before* they become incidents
-> - Tell you what to look at *next*
-> - Reduce toil by doing the task, not just describing it
+> オンコール担当者の視点で考えましょう。優れたプロンプトは次のことをする傾向があります。
+> - 本当に重要なエラーを見つける（ただのノイズではなく）
+> - インシデントになる*前に*パターンを察知する
+> - *次に*何を確認すべきかを教える
+> - タスクを実行することで手作業を減らす（説明するだけでなく）
 
-## Prompt ideas to riff on
+## プロンプトのアイデア
 
 ```
-What are the most common causes of errors across my services in the last hour?
+直近 1 時間でサービス全体にわたる最も一般的なエラーの原因は何ですか？
 ```
 ```
-Are there any unusual spikes in request patterns, latency, or status codes today?
+今日のリクエストパターン、レイテンシー、ステータスコードに異常なスパイクはありますか？
 ```
 ```
-If I were paged for @checkoutservice right now, what should I investigate first — and why?
+今 @checkoutservice でアラートが鳴ったとしたら、最初に何を調査すべきですか？その理由も教えてください。
 ```
 ```
-Compare this week's error patterns to last week's. What's new or getting worse?
+今週のエラーパターンを先週と比較してください。新しいものや悪化しているものはありますか？
 ```
 ```
-Build me an SLO-style view for the frontend service and tell me if we're burning error budget.
+frontend サービスの SLO スタイルのビューを作成し、エラーバジェットを消費しているかどうか教えてください。
 ```
 ```
-Walk a brand-new engineer through how the checkout flow works based on the traces.
+トレースをもとに、新しいエンジニアに checkout フローがどのように機能するかを説明してください。
 ```
 ```
-Which shopping agent is the most expensive per conversation, and how would you cut its token cost?
+会話あたりのコストが最も高いショッピングエージェントはどれですか？そのトークンコストを削減するにはどうしますか？
 ```
 ```
-Are any pods in ecommerce-prod unhealthy, and is that affecting user-facing services?
+ecommerce-prod のポッドに異常があるものはありますか？それがユーザー向けサービスに影響していますか？
 ```
 
-## Bonus rounds
+## ボーナスラウンド
 
-- **Investigation prompt-off:** have your facilitator run a *different* k6 failure test (Broken DB Connection vs. Slow DB Query) and see whose Deep Investigation nails the root cause fastest.
-- **Teach-me mode:** ask the Assistant to explain a PromQL or TraceQL query it wrote, well enough that you could write it yourself next time.
-- **Customize it:** write a Custom Rule (e.g. "always answer with the affected service and a next step") and re-run a prompt to see the behavior change.
+- **Investigation プロンプト対決:** ファシリテーターに別の k6 障害テスト（Broken DB Connection vs. Slow DB Query）を実行してもらい、誰のディープ調査が最速で根本原因を特定できるか競いましょう。
+- **教えてモード:** Assistant が書いた PromQL または TraceQL クエリを、次回は自分で書けるくらいに説明してもらいましょう。
+- **カスタマイズ:** Custom Rule を書いて（例: 「常に影響を受けているサービスと次のステップを答えること」）プロンプトを再実行し、動作の変化を確認しましょう。
 
-## Share out
+## 発表
 
-Drop your best prompt + response in the workshop channel (or read it to the room). We'll vote on the most *actually useful* one. 🏆
+ベストプロンプトと回答をワークショップチャンネルに投稿（または室内で発表）しましょう。最も*実際に役立つ*プロンプトを投票で決めます。🏆
 
 ---
 
-Thanks for exploring, breaking, and investigating with us — across application, Kubernetes, and AI observability.
+探索し、壊し、調査してくださった皆さん、ありがとうございました — アプリケーション、Kubernetes、AI オブザーバビリティを横断して。
 
-Docs: [Grafana Assistant](https://grafana.com/docs/grafana-cloud/machine-learning/assistant/) · [Investigations](https://grafana.com/docs/grafana-cloud/machine-learning/assistant/guides/investigation/) · [Application Observability](https://grafana.com/docs/grafana-cloud/monitor-applications/application-observability/) · [Kubernetes Monitoring](https://grafana.com/docs/grafana-cloud/monitor-infrastructure/kubernetes-monitoring/) · [AI Observability](https://grafana.com/blog/ai-observability-for-agents-in-grafana-cloud/)
+ドキュメント: [Grafana Assistant](https://grafana.com/docs/grafana-cloud/machine-learning/assistant/) · [Investigations](https://grafana.com/docs/grafana-cloud/machine-learning/assistant/guides/investigation/) · [Application Observability](https://grafana.com/docs/grafana-cloud/monitor-applications/application-observability/) · [Kubernetes Monitoring](https://grafana.com/docs/grafana-cloud/monitor-infrastructure/kubernetes-monitoring/) · [AI Observability](https://grafana.com/blog/ai-observability-for-agents-in-grafana-cloud/)

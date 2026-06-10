@@ -1,59 +1,59 @@
-# 4 — Meet the Assistant: Chat, Query, Dashboard
+# 4 — Assistant を使いこなす: チャット、クエリ、ダッシュボード
 
-*Time: ~25 min. Goal: drive Grafana in natural language — ask questions, build queries, correlate signals, and create a dashboard, no PromQL required.*
+*所要時間: 約 25 分。目標: 自然言語で Grafana を操作する — 質問をして、クエリを構築し、シグナルを相関させ、PromQL 不要でダッシュボードを作成する。*
 
-Open the **Assistant** (sparkle ✦ icon, top-right). The chat panel is context-aware: it knows what page you're on, your data sources, and your dashboards.
+**Assistant**（スパークル ✦ アイコン、右上）を開きます。チャットパネルはコンテキスト認識型で、現在開いているページ、データソース、ダッシュボードを把握しています。
 
 > [!TIP]
-> Use **`@` mentions** to anchor the Assistant to a specific service or data source — e.g. `@checkoutservice` or `@loki`. This dramatically improves accuracy.
+> **`@` メンション**を使うと、Assistant を特定のサービスやデータソースに固定できます — 例: `@checkoutservice` や `@loki`。これにより精度が大幅に向上します。
 
-## A. Ask about system health
+## A. システムの状態を確認する
 
-Type these one at a time and watch how it picks the right metrics/labels for *your* data:
-
-```
-What's the error rate for @checkoutservice over the last hour?
-```
-```
-Which service has the highest p95 latency right now?
-```
-```
-Find logs mentioning "timeout" or "exception" in the last 15 minutes and tell me which service they came from.
-```
-
-## B. Build a query you didn't have to write
+以下を 1 つずつ入力し、*あなたの*データに対して適切なメトリクスとラベルを選択する様子を確認しましょう。
 
 ```
-Write a PromQL query for the request rate of the frontend service, grouped by HTTP status code, and show it to me.
+@checkoutservice の直近 1 時間のエラーレートを教えてください。
+```
+```
+現在 p95 レイテンシーが最も高いサービスはどれですか？
+```
+```
+直近 15 分間に「timeout」または「exception」に言及しているログを見つけて、どのサービスから来たか教えてください。
 ```
 
-- Ask it to **explain** the query line by line. (Great for the "teach yourself observability" angle.)
-- Ask it to **open this in Explore** so you can see the panel.
-
-## C. Correlate signals in one thread
-
-Chain the conversation — this is the on-call workflow:
+## B. 書かずに済んだクエリを構築する
 
 ```
-1. Look at CPU/latency for @checkoutservice.
-2. Are there any error logs for the same service during that window?
-3. Pull a trace that shows where the time is going.
-4. Explain how these findings relate to each other.
+frontend サービスのリクエストレートを HTTP ステータスコード別にグループ化した PromQL クエリを書いて、結果を表示してください。
 ```
 
-Notice it carries context between turns and pivots metrics → logs → traces for you.
+- クエリを 1 行ずつ**説明**するよう依頼します。（オブザーバビリティを自己学習する際に役立ちます。）
+- **Explore で開く**よう依頼してパネルを確認します。
 
-## D. Build a dashboard by describing it
+## C. 1 つの会話でシグナルを相関させる
+
+会話を連鎖させましょう — これがオンコールのワークフローです。
 
 ```
-Create a dashboard for the checkoutservice with panels for request rate, error rate, p95 latency, and a panel of recent error logs. Use the OTel data from this stack.
+1. @checkoutservice の CPU/レイテンシーを確認してください。
+2. 同じ時間帯に同じサービスのエラーログはありますか？
+3. 時間の経緯を示すトレースを取得してください。
+4. これらの結果がどのように関連しているか説明してください。
 ```
 
-- Let it generate the panels, then ask for tweaks: *"add a panel for the paymentservice latency"* or *"change the latency panel to p99."*
-- **Save** the dashboard. You just built an observability dashboard without touching a query editor.
+ターン間でコンテキストを引き継ぎ、メトリクス → ログ → トレースとピボットしていく様子を確認しましょう。
 
-## ✅ Checkpoint
+## D. 説明するだけでダッシュボードを構築する
 
-You answered health questions, generated and understood a query, correlated three signals in one thread, and built + saved a dashboard — all in natural language. Now let’s make the Assistant yours — memories, rules, and automations.
+```
+checkoutservice のダッシュボードを作成してください。リクエストレート、エラーレート、p95 レイテンシー、最近のエラーログのパネルを含め、このスタックの OTel データを使用してください。
+```
 
-Next: **[Module 5 — Customize & Automate →](./05-automations.md)**
+- パネルを生成させたら、調整を依頼しましょう: *「paymentservice のレイテンシーパネルを追加して」* または *「レイテンシーパネルを p99 に変更して」*
+- ダッシュボードを**保存**します。クエリエディターに触れることなくオブザーバビリティダッシュボードを作成できました。
+
+## ✅ チェックポイント
+
+ヘルスに関する質問に答え、クエリを生成して理解し、1 つの会話で 3 つのシグナルを相関させ、ダッシュボードを構築・保存しました — すべて自然言語で。次は Assistant を自分仕様にします — Memories、Rules、Automations です。
+
+次: **[モジュール 5 — カスタマイズと自動化 →](./05-automations.md)**

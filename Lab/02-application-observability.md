@@ -1,42 +1,42 @@
-# 2 — Application Observability, Knowledge Graph & RCA
+# 2 — Application Observability、ナレッジグラフ、RCA
 
-*Time: ~20 min. Goal: see the Grafana Cloud differentiators the Assistant reasons on top of — service inventory, the Service Map, the Entity graph (knowledge graph), and the RCA workbench.*
+*所要時間: 約 20 分。目標: Assistant が上で推論する Grafana Cloud の差別化機能 — サービスインベントリ、サービスマップ、エンティティグラフ（ナレッジグラフ）、RCA ワークベンチ — を確認する。*
 
-Application Observability turns raw OTel data into an OTel-native view of your services. Nothing to build — it auto-detects services from telemetry.
+Application Observability は生の OTel データを OTel ネイティブなサービスビューに変換します。構築作業は不要で、テレメトリからサービスを自動検出します。
 
-## A. Service Inventory (RED, out of the box)
+## A. サービスインベントリ（すぐに使える RED）
 
-1. Left nav → **Observability → Application**.
-2. You'll see the e-commerce services in the `ecommerce-prod` namespace — `frontend`, `cartservice`, `checkoutservice`, `paymentservice`, `productcatalogservice`, `recommendationservice`, `currencyservice`, `chatservice`, and more — with aggregated **RED** metrics (**R**ate, **E**rrors, **D**uration p95).
-3. Sort by error rate or p95 duration. Note which services carry the most traffic and which look hot. (Use the time picker — widen to the last hour if it's quiet.)
+1. 左ナビ → **Observability → Application**。
+2. `ecommerce-prod` Namespace の EC サービス（`frontend`、`cartservice`、`checkoutservice`、`paymentservice`、`productcatalogservice`、`recommendationservice`、`currencyservice`、`chatservice` など）が集計された **RED** メトリクス（**R**ate、**E**rrors、**D**uration p95）と共に表示されます。
+3. エラーレートまたは p95 継続時間でソートします。最もトラフィックが多いサービスと、負荷が高そうなサービスをメモしておきます。（時間ピッカーを使って — 静かな場合は直近 1 時間に広げてみましょう。）
 
-## B. Service overview, Service Map & "Explain" a trace
+## B. サービス概要、サービスマップ、トレースの「説明」
 
-1. Click a service (try `checkoutservice` or `frontend`).
-2. The overview shows RED detail, top operations, and **upstream/downstream dependencies**.
-3. Open the **Service Map** tab to see the topology — how requests flow `frontend → checkoutservice → paymentservice / shippingservice`, etc. This dependency graph is what the Assistant uses to reason about blast radius.
-4. Drill into **Traces** for the service and open a slow or errored trace. Rather than decoding the span waterfall by hand, click **Explain** (the Assistant action on the trace) — the Assistant reads the whole trace and tells you, in plain language, where the time went, which span failed, and what to look at next.
+1. サービスをクリックします（`checkoutservice` または `frontend` を試してみましょう）。
+2. 概要画面には RED の詳細、主要なオペレーション、**上流/下流の依存関係**が表示されます。
+3. **Service Map** タブを開いてトポロジーを確認します — リクエストがどのように `frontend → checkoutservice → paymentservice / shippingservice` と流れるかが分かります。Assistant がブラスト半径を推論する際に使う依存グラフです。
+4. サービスの **Traces** に移動し、遅いトレースまたはエラーのあるトレースを開きます。スパンのウォーターフォールを手動で解読する代わりに、**Explain**（トレース上の Assistant アクション）をクリックしましょう。Assistant がトレース全体を読み、どこに時間がかかったか、どのスパンが失敗したか、次に何を確認すべきかを平易な言葉で説明します。
 
 > [!TIP]
-> Use **Explain** on *any* trace, panel, or query you don't immediately understand — it's the fastest way for a newcomer to read a trace without knowing the services. Then ask a follow-up like *"why is this span slow?"* or *"show me the logs for the failing span."*
+> すぐに理解できないトレース、パネル、クエリには **Explain** を使いましょう — サービスを知らなくてもトレースを読む最速の方法です。その後、*「このスパンが遅い理由は？」* や *「失敗しているスパンのログを見せて」* といったフォローアップ質問をしてみましょう。
 >
-> Talking point: the Assistant doesn't guess your topology. It reads this map + your dashboards, which is why it can answer "how is checkout?" *and* know what checkout depends on.
+> 補足: Assistant はトポロジーを推測しているわけではありません。このマップとダッシュボードを読み取っているからこそ、「checkout の状態は？」という質問に答えつつ、checkout が何に依存しているかも把握できるのです。
 
-## C. Entity graph — the knowledge graph (Asserts)
+## C. エンティティグラフ — ナレッジグラフ（Asserts）
 
-1. Left nav → **Observability → Entity graph**.
-2. This is the **Asserts** knowledge graph: services, pods, nodes, and their relationships, enriched with health signals (Saturation, Errors, Latency, Traffic — "SLATE").
-3. Pick an e-commerce service and explore how an unhealthy entity relates to its neighbours. Note one relationship you'd want to follow during an incident.
+1. 左ナビ → **Observability → Entity graph**。
+2. これは **Asserts** ナレッジグラフです。サービス、ポッド、ノード、およびそれらの関係が、ヘルスシグナル（Saturation、Errors、Latency、Traffic — "SLATE"）とともに表示されます。
+3. EC サービスを 1 つ選び、異常なエンティティが周辺にどう影響しているかを探索します。インシデント時に追いかけたいと思う関係を 1 つメモしておきましょう。
 
-## D. RCA workbench
+## D. RCA ワークベンチ
 
-1. Left nav → **Observability → RCA workbench**.
-2. In the service/scope selector at the top, **select all services** (use **Select all** so the workbench spans the whole `ecommerce-prod` app, not just one service). This gives you the full correlated picture across the app.
-3. This is the root-cause workbench — with everything selected, it surfaces correlated anomalies (error spikes, saturation, latency) across all related entities on one timeline.
-4. Look at what's currently flagged. (It gets much more interesting in Module 6 once we inject a failure — keep all services selected so the blast radius shows up.)
+1. 左ナビ → **Observability → RCA workbench**。
+2. 上部のサービス/スコープセレクターで、**すべてのサービスを選択**します（**Select all** を使って、1 つのサービスだけでなく `ecommerce-prod` アプリ全体をスパンするようにします）。こうすることで、アプリ全体の相関した全体像が得られます。
+3. これが根本原因分析ワークベンチです。すべてが選択されている状態で、すべての関連エンティティにわたる相関した異常（エラースパイク、サチュレーション、レイテンシー）が 1 つのタイムラインに表示されます。
+4. 現在フラグが立っている内容を確認します。（モジュール 6 で障害を注入すると格段に興味深くなります — ブラスト半径を表示するためにすべてのサービスを選択したままにしておきましょう。）
 
-## ✅ Checkpoint
+## ✅ チェックポイント
 
-You've seen the layer that makes Grafana's AI observability-*native*: a service inventory with RED out of the box, an auto-built Service Map, the Asserts Entity graph, and the RCA workbench. Next: the Kubernetes layer underneath it.
+Grafana の AI オブザーバビリティをネイティブにする層を確認しました。すぐに使えるサービスインベントリ（RED 付き）、自動構築されたサービスマップ、Asserts エンティティグラフ、RCA ワークベンチです。次はその下にある Kubernetes レイヤーです。
 
-Next: **[Module 3 — Kubernetes Observability →](./03-kubernetes-observability.md)**
+次: **[モジュール 3 — Kubernetes Observability →](./03-kubernetes-observability.md)**

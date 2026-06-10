@@ -1,48 +1,48 @@
 # 3 — Kubernetes Observability + Assistant
 
-*Time: ~15 min. Goal: see the cluster the e-commerce app runs on, and let the Assistant explain it for you.*
+*所要時間: 約 15 分。目標: EC アプリが動作するクラスターを確認し、Assistant に説明してもらう。*
 
-The e-commerce services run on Kubernetes. Grafana's Kubernetes Monitoring gives you a fleet-to-pod view with no dashboards to build.
+EC サービスは Kubernetes 上で動作しています。Grafana の Kubernetes Monitoring は、ダッシュボードを構築しなくてもフリートからポッドまでのビューを提供します。
 
-## A. Cluster & workload health
+## A. クラスターとワークロードの状態確認
 
-1. Left nav → **Observability → Kubernetes**.
-2. The **Overview** shows **Availability**, **Stability**, **Infrastructure**, and **Efficiency** at a glance, with `cluster` and `namespace` filters at the top.
-3. Set **namespace = `ecommerce-prod`** to scope to our app.
-4. Walk the left-nav sub-pages:
-   - **Workloads** — deployments/statefulsets for the e-commerce services. Look for restarts, crash loops, or pending pods.
-   - **Nodes** — node CPU/memory pressure.
-   - **Cost** — what this namespace/workload is costing.
-   - **Alerts** — any firing Kubernetes alerts.
+1. 左ナビ → **Observability → Kubernetes**。
+2. **Overview** には、`cluster` と `namespace` フィルターが上部にある状態で、**Availability**、**Stability**、**Infrastructure**、**Efficiency** が一目で表示されます。
+3. **namespace = `ecommerce-prod`** に設定してアプリにスコープを絞ります。
+4. 左ナビのサブページを確認します。
+   - **Workloads** — EC サービスの Deployment/StatefulSet。再起動、クラッシュループ、Pending のポッドを確認します。
+   - **Nodes** — ノードの CPU/メモリ圧迫状況。
+   - **Cost** — この Namespace/ワークロードのコスト。
+   - **Alerts** — 発火中の Kubernetes アラート。
 
-**Try:** find a workload with the most restarts or highest memory, and open it to see pod-level detail.
+**試してみましょう:** 最も再起動回数が多いか、メモリ使用量が最も高いワークロードを見つけ、ポッドレベルの詳細を開きます。
 
-## B. Let the Assistant explain it
+## B. Assistant に説明させる
 
-Open the **Assistant** (✦) while you're on a Kubernetes page — it's context-aware, so it already knows what you're looking at.
+Kubernetes ページを表示した状態で **Assistant**（✦）を開きます。コンテキスト認識型なので、今見ているページをすでに把握しています。
 
 ```
-What's the health of the ecommerce-prod namespace right now?
+ecommerce-prod Namespace の現在の状態を教えてください。
 ```
 ```
-Which pods in ecommerce-prod have restarted recently, and why?
+ecommerce-prod のポッドで最近再起動したものはありますか？その理由も教えてください。
 ```
 ```
-Is any node under CPU or memory pressure? Which workloads are driving it?
+CPU またはメモリに圧迫があるノードはありますか？どのワークロードが原因ですか？
 ```
 ```
-Explain what the checkoutservice deployment depends on in this cluster.
+このクラスター内で checkoutservice のデプロイが依存しているものを説明してください。
 ```
 
 > [!TIP]
-> Because Kubernetes telemetry, the App Observability Service Map, and the Asserts Entity graph all feed the same knowledge graph, the Assistant can connect "pod is restarting" to "service error rate is up" to "checkout is failing" — the vertical slice from infra to user impact.
+> Kubernetes テレメトリ、App Observability サービスマップ、Asserts エンティティグラフはすべて同じナレッジグラフを共有しているため、Assistant は「ポッドが再起動している」→「サービスのエラーレートが上昇している」→「checkout が失敗している」という、インフラからユーザー影響までの縦断的なつながりを把握できます。
 
-## C. Connect it back to RCA
+## C. RCA へのつなぎ
 
-From a Kubernetes page, note the **RCA Workbench** link in the header. During an incident you'll bounce between *what's failing for users* (Application), *what's unhealthy underneath* (Kubernetes), and *why* (RCA workbench + Assistant).
+Kubernetes ページのヘッダーにある **RCA Workbench** リンクを確認しましょう。インシデント時には、*ユーザーに何が起きているか*（Application）、*その下で何が異常か*（Kubernetes）、*その原因は何か*（RCA ワークベンチ + Assistant）を行き来することになります。
 
-## ✅ Checkpoint
+## ✅ チェックポイント
 
-You've seen the cluster under the app and used the Assistant to interpret pod/node health in plain language. Next: drive the Assistant properly — queries, correlation, and a dashboard.
+アプリの下で動くクラスターを確認し、Assistant にポッド/ノードの状態を平易な言葉で解説してもらいました。次は Assistant を本格的に使いこなします — クエリ、相関、ダッシュボードです。
 
-Next: **[Module 4 — Meet the Assistant →](./04-assistant-chat.md)**
+次: **[モジュール 4 — Assistant を使いこなす →](./04-assistant-chat.md)**

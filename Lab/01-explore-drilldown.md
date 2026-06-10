@@ -1,45 +1,45 @@
-# 1 — Explore Without Queries: Drilldown & Correlation
+# 1 — クエリなしで探索: Drilldown と相関
 
-*Time: ~15 min. Goal: get answers from metrics, logs, and traces without writing a single query — and pivot between signals.*
+*所要時間: 約 15 分。目標: クエリを 1 行も書かずにメトリクス、ログ、トレースから答えを得て、シグナル間を行き来する。*
 
-The Drilldown apps let you explore telemetry by clicking, not by typing PromQL/LogQL/TraceQL. This is the "week one shouldn't be about learning the tool" promise in action.
+Drilldown アプリを使えば、PromQL/LogQL/TraceQL を入力する代わりにクリックだけでテレメトリを探索できます。「最初の 1 週間はツールの学習に費やすべきではない」という考え方を体現した機能です。
 
 ## A. Metrics Drilldown
 
-1. Go to **Drilldown → Metrics**.
-2. Browse the metrics emitted by the e-commerce app. Filter by label — try `service_name` (or `service.name`) and pick `checkoutservice` or `frontend`.
-3. Click a metric to see it broken out by label dimensions automatically. Notice you never wrote a query.
+1. **Drilldown → Metrics** に移動します。
+2. EC アプリが出力しているメトリクスを閲覧します。ラベルでフィルタリングしてみましょう — `service_name`（または `service.name`）を選択し、`checkoutservice` または `frontend` を選びます。
+3. メトリクスをクリックすると、ラベルのディメンションごとに自動的に分解されて表示されます。クエリを書かずに済んでいることに注目してください。
 
-**Try:** find request rate or latency for the `frontend` service and note the time range where traffic is heaviest.
+**試してみましょう:** `frontend` サービスのリクエストレートまたはレイテンシーを見つけ、トラフィックが最も多い時間帯を確認します。
 
 ## B. Logs Drilldown
 
-1. Go to **Drilldown → Logs**.
-2. Filter to a service (e.g. `service_name = cartservice`). Drilldown surfaces log **volume**, detected **patterns**, and **fields** for you.
-3. Click into a spike or an error pattern to read the underlying lines.
+1. **Drilldown → Logs** に移動します。
+2. サービスでフィルタリングします（例: `service_name = cartservice`）。Drilldown はログの**ボリューム**、検出された**パターン**、**フィールド**を自動的に表示します。
+3. スパイクやエラーパターンをクリックして、対象のログ行を確認します。
 
-**Try:** isolate any `error`/`exception` level logs and identify which service is noisiest.
+**試してみましょう:** `error`/`exception` レベルのログを絞り込み、最もノイズが多いサービスを特定します。
 
 ## C. Traces Drilldown
 
-1. Go to **Drilldown → Traces**.
-2. Explore the **RED** view — rate, errors, duration — across services without TraceQL.
-3. Open a slow or errored trace and walk the span waterfall. See which service and operation dominates the latency.
+1. **Drilldown → Traces** に移動します。
+2. TraceQL を使わずに、サービス横断で **RED** ビュー（レート、エラー、継続時間）を確認します。
+3. 遅いトレースまたはエラーが発生しているトレースを開き、スパンのウォーターフォールを確認します。レイテンシーを支配しているサービスとオペレーションを特定します。
 
-## D. Correlate across signals (the payoff)
+## D. シグナル間の相関（これが核心です）
 
-This is where it clicks. From a single trace you can hop to the exact logs for that request:
+ここが重要なポイントです。1 つのトレースから、そのリクエストの正確なログにジャンプできます。
 
-1. In Traces Drilldown, open a trace for `checkoutservice` or `frontend`.
-2. Find a span with high latency or an error tag.
-3. Use the span's **Logs for this span** / trace-to-logs link to jump straight into the logs emitted during that request (trace ↔ logs correlation comes from the shared `trace_id`).
-4. Now go the other way: from an error log line, follow the **trace_id** back into the trace to see the full request path.
+1. Traces Drilldown で `checkoutservice` または `frontend` のトレースを開きます。
+2. レイテンシーが高いスパン、またはエラータグが付いたスパンを見つけます。
+3. スパンの **Logs for this span** / トレース→ログリンクを使って、そのリクエスト中に出力されたログに直接ジャンプします（トレース↔ログの相関は共有された `trace_id` によって実現しています）。
+4. 逆方向も試してみましょう: エラーログの行から **trace_id** をたどり、トレースに戻ってリクエストの全体像を確認します。
 
 > [!TIP]
-> OTel instrumentation injects `trace_id` into logs automatically, which is what makes this one-click pivot possible. No manual derived-field setup needed for OTLP data.
+> OTel 計装は `trace_id` をログに自動的に付与するため、このワンクリックピボットが可能になっています。OTLP データであれば、手動の derived field 設定は不要です。
 
-## ✅ Checkpoint
+## ✅ チェックポイント
 
-You found a hotspot in metrics, confirmed it in logs, and saw the full request path in traces — moving between all three signals by clicking. Keep the service you found interesting (e.g. `checkoutservice`, `cartservice`, or `frontend`) in mind; you'll point the Assistant at it next.
+メトリクスでホットスポットを見つけ、ログで確認し、トレースでリクエストの全体像を把握しました — 3 つのシグナルすべてをクリックだけで行き来しました。興味を持ったサービス（例: `checkoutservice`、`cartservice`、`frontend`）を覚えておいてください。次のモジュールで Assistant をそこに向けます。
 
-Next: **[Module 2 — Application Observability & RCA →](./02-application-observability.md)**
+次: **[モジュール 2 — Application Observability と RCA →](./02-application-observability.md)**
