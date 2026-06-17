@@ -4,7 +4,7 @@
 
 ## 観察するアプリについて
 
-**Kubernetes** 上で動作するクラウドネイティブな**天文学系 EC サイト**（"ecommerce"）です。約 20 のマイクロサービス（`frontend`、`cartservice`、`checkoutservice`、`paymentservice`、`productcatalogservice`、`recommendationservice`、`currencyservice` など）が `ecommerce-prod` Namespace で稼働しており、OpenTelemetry のメトリクス・ログ・トレースを完全に出力しています。
+**Kubernetes** 上で動作するクラウドネイティブな**EC サイト**（"ecommerce"）です。約 20 のマイクロサービス（`frontend`、`cartservice`、`checkoutservice`、`paymentservice`、`productcatalogservice`、`recommendationservice`、`currencyservice` など）が `ecommerce-prod` Namespace で稼働しており、OpenTelemetry のメトリクス・ログ・トレースを完全に出力しています。
 
 また、これは**アジェンティック AI アプリ**でもあります。`chatservice` には Claude と GPT モデルを使ったショッピングエージェント（`general_agent`、`product_agent`、`cart_agent`）が含まれています。今日はリアルなマイクロサービスアプリ*と*リアルな AI エージェントアプリを同時に観察し、さらに AI を使ってそれを行います。
 
